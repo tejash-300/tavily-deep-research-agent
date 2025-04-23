@@ -1,138 +1,150 @@
-🧠 AI Agentic Deep Research System
-An advanced AI-driven research framework that automates deep web exploration, multilingual translation, and intelligent summarization. Leveraging Tavily for web crawling, LangGraph for structured data management, and LangChain for orchestrating agent workflows, this system streamlines the process of gathering and synthesizing information from diverse online sources.​
+# 🧠 AI Deep Research Agent System
 
-📌 Table of Contents
-Features
+> Built by [@tejash-paney](https://github.com/tejash-300)
 
-Architecture
+An end-to-end AI system that performs **deep web research** using Tavily, structures knowledge using LangGraph, and drafts answers using LangChain RetrievalQA. Designed with modular agents for crawling, translation, ingestion, and answer generation.
 
-Installation
+---
 
-Usage
+## 🚧 Project Purpose
 
-Environment Variables
+This system automates the process of:
 
-Contributing
+- Crawling relevant web pages from seed URLs or queries  
+- Translating non-English content to English  
+- Storing and embedding knowledge into LangGraph  
+- Retrieving and synthesizing information via LangChain
 
-License
+This aligns with the assignment goal of designing an **AI Agent-based Deep Research System**.
 
-🚀 Features
-Automated Web Crawling: Utilizes Tavily to fetch and parse content from specified URLs.
+---
 
-Multilingual Translation: Translates non-English content to English using the Deep Translator API.
+## 📐 System Architecture
 
-Structured Data Ingestion: Ingests and organizes data into LangGraph for efficient retrieval.
+### 🔧 Flowchart Overview
 
-Intelligent Summarization: Employs LangChain to generate concise summaries and answers from the ingested data.
-
-Modular Agent Design: Features distinct agents for research, translation, ingestion, retrieval, and drafting, promoting scalability and maintainability.​
-
-🧭 Architecture
-mermaid
-Copy
-Edit
+```mermaid
 graph TD
-    A[User Input: Seed URLs] --> B[Research Agent]
+    A[User Input: Seed URLs or Query] --> B[Research Agent]
     B --> C[Translation Agent]
     C --> D[Graph Ingestor]
     D --> E[LangGraph Storage]
     E --> F[Graph Retriever]
     F --> G[Drafting Agent]
-    G --> H[Final Output]
-Components:
+    G --> H[Answer + Source Documents]
+```
 
-Research Agent: Initiates web crawling using Tavily based on user-provided URLs.
+### 🧩 Component Roles
 
-Translation Agent: Translates retrieved content to English.
+| Component          | Role                                                                 |
+|--------------------|----------------------------------------------------------------------|
+| `ResearchAgent`     | Uses Tavily to fetch or search content from the web                 |
+| `TranslationAgent`  | Detects and translates non-English text using Deep Translator       |
+| `GraphIngestorWithCred` | Scores credibility, chunks, embeds, and stores in LangGraph         |
+| `GraphRetriever`    | Pulls documents and builds a vector index using LangChain + Chroma  |
+| `DraftingAgent`     | Uses RetrievalQA from LangChain to generate answers with citations  |
 
-Graph Ingestor: Processes and stores translated data into LangGraph.
+> ⚠️ All agents run sequentially and gracefully degrade (e.g., fallback to local vector retrieval if LangGraph is unavailable).
 
-Graph Retriever: Fetches relevant information from LangGraph based on queries.
+---
 
-Drafting Agent: Generates summaries or answers using LangChain's language models.​
+## 📁 Folder Structure
 
-⚙️ Installation
-Clone the Repository:
+```
+ai-deep-research-agent/
+│
+├── agents/
+│   ├── research_agent.py          # Crawling & search via Tavily
+│   ├── translation_agent.py       # Translation into English
+│   ├── graph_ingestor.py          # Credibility scoring, chunking, ingestion
+│   ├── graph_retriever.py         # Chroma retriever with fallback
+│   └── drafting_agent.py          # Answer generation using RetrievalQA
+│
+├── utils.py                       # Helper functions for chunking & embedding
+├── main.py                        # Entry point to run the pipeline
+├── requirements.txt               # Python dependencies
+├── .env                           # Your API keys
+└── README.md                      # You're reading it!
+```
 
-bash
-Copy
-Edit
-git clone https://github.com/yourusername/ai-agentic-deep-research.git
-cd ai-agentic-deep-research
-Create a Virtual Environment:
+---
 
-bash
-Copy
-Edit
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-Install Dependencies:
+## ⚙️ Setup Instructions
 
-bash
-Copy
-Edit
-pip install -r requirements.txt
-Set Up Environment Variables:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/tejash-paney/ai-deep-research-agent.git
+   cd ai-deep-research-agent
+   ```
 
-Create a .env file in the project root with the following content:
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-env
-Copy
-Edit
-TAVILY_API_KEY=your_tavily_api_key
-LANGGRAPH_API_KEY=your_langgraph_api_key
-OPENAI_API_KEY=your_openai_api_key
-🧪 Usage
-Run the Main Script:
+3. **Create `.env` with your API keys**
+   ```env
+   TAVILY_API_KEY=your-tavily-key
+   LANGGRAPH_API_KEY=your-langgraph-key
+   OPENAI_API_KEY=your-openai-key
+   ```
 
-bash
-Copy
-Edit
+---
+
+## 🚀 Usage
+
+### Run the pipeline
+
+```bash
 python main.py
-Provide Seed URLs:
+```
 
-When prompted, input the URLs you wish the system to research. For example:
+This script will:
+- Crawl the seed URLs
+- Translate and score content
+- Ingest it into LangGraph
+- Retrieve relevant data
+- Draft a final answer with sources
 
-bash
-Copy
-Edit
-Enter seed URLs (comma-separated): https://en.wikipedia.org/wiki/Artificial_intelligence
-View Results:
+> Works even if LangGraph is unreachable—it will fallback to local document retrieval.
 
-The system will output a summarized answer along with the sources used.
+---
 
-🛠️ Environment Variables
+## ✅ Example Output
 
-Variable	Description
-TAVILY_API_KEY	API key for Tavily web crawling.
-LANGGRAPH_API_KEY	API key for LangGraph storage.
-OPENAI_API_KEY	API key for OpenAI models.
-🤝 Contributing
-Contributions are welcome! Please follow these steps:​
-DEV Community
+```
+✅ Model returned an answer:
+AI is the capability of machines to perform tasks typically associated with human intelligence.
 
-Fork the Repository
+📑 Sources:
+- https://en.wikipedia.org/wiki/Artificial_intelligence: AI refers to the capability of computational systems to...
+```
 
-Create a New Branch:
+---
 
-bash
-Copy
-Edit
-git checkout -b feature/your-feature-name
-Commit Your Changes:
+## 💡 Future Improvements
 
-bash
-Copy
-Edit
-git commit -m "Add your message here"
-Push to Your Fork:
+- Integrate PDF/YouTube ingestion
+- Add GUI or web interface
+- Multi-agent asynchronous execution with LangGraph workflows
+- Enhanced summarization and Q&A with RAG pipelines
 
-bash
-Copy
-Edit
-git push origin feature/your-feature-name
-Create a Pull Request
+---
 
-📄 License
-This project is licensed under the MIT License. See the LICENSE file for details.​
+## 🧑‍💻 Contributing
+
+Pull requests welcome! Please fork the repo and submit a clean PR.
+
+---
+
+## 🪪 License
+
+MIT License. See [`LICENSE`](LICENSE).
+
+---
+
+## 📬 Contact
+
+Made with ❤️ by [Tejash Paney](https://github.com/tejash-300)  
+Email: (mailto:tejashpandey740@gmail.com)
 
